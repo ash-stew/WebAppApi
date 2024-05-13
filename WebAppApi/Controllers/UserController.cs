@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebAppApi.Models;
 
 namespace WebAppApi.Controllers
 {
@@ -7,44 +8,77 @@ namespace WebAppApi.Controllers
 	[ApiController]
 	public class UserController : ControllerBase
 	{
-		private static List<string> listUsers = new List<string>() { "Bob", "Bill", "Will", "Dom" };
+		private static List<UserDto> listUsers = new List<UserDto>() {
+		new UserDto()
+		{  Firstname = "Bill", Lastname = "Gates", Email = "bill@microsoft.com", Phone = "+111222333",
+		   Address = " New York, USA"
+
+
+		},
+		new UserDto()
+		{  Firstname = "Bob", Lastname = "Smith", Email = "bob@gmail.com", Phone = "+123456789",
+		   Address = " New York, USA"
+
+
+		}
+		 };
 
 		[HttpGet]
-		public List<string> GetUsers()
+		public IActionResult GetUsers()
 		{
-			return listUsers;
+			if(listUsers.Count > 0)
+			{
+				return Ok(listUsers);
+			}
+			return NoContent();
 		}
 
 		[HttpGet("{id}")]
-		public string GetUser(int id)
+		public IActionResult GetUser(int id)
 		{
 			if(id >=0 &&  id < listUsers.Count)
 			{
-				return listUsers[id];
+				return Ok(listUsers[id]);
 			}
-			return "";
+			return NotFound();
 		}
 
 		[HttpPost]
-		public void AddUser(string username)
+		public IActionResult AddUser(UserDto user)
 		{
-			listUsers.Add(username);
+			if(user.Email.Equals("user@example.com"))
+			{
+				ModelState.AddModelError("Email", "This Email Address is unauthorized!");
+				return BadRequest(ModelState);
+			}
+			listUsers.Add(user);
+			return Ok();
 		}
 
 		[HttpPut("{id}")]
-		public void UpdateUser(int id, string username)
+		public IActionResult UpdateUser(int id, UserDto user)
 		{
-			if(id >=0 && id < listUsers.Count)
+			if (user.Email.Equals("user@example.com"))
 			{
-				listUsers[id] = username;
+				ModelState.AddModelError("Email", "This Email Address is unauthorized!");
+				return BadRequest(ModelState);
 			}
-			
+
+			if (id >=0 && id < listUsers.Count)
+			{
+				listUsers[id] = user;
+			}
+			return Ok();
 		}
 
 		[HttpDelete("{id}")]
-		public void DeleteUser(int id)
+		public IActionResult DeleteUser(int id)
 		{
-			listUsers.RemoveAt(id);
+			if(id >= 0 && id < listUsers.Count)
+			{
+				listUsers.RemoveAt(id);
+			}
+			return NoContent();
 		}
 	}
 }
