@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebAppApi.Filters;
 using WebAppApi.Models;
 using WebAppApi.Services;
 
@@ -28,6 +29,7 @@ namespace WebAppApi.Controllers
 
 
 		[HttpGet("info")]
+		[DebugFilter]
 		public IActionResult GetInfo(int? id, string? name, int? page, [FromServices]IConfiguration configuration, [FromServices] TimeService timeService)
 		{
 			if(id != null || name != null || page != null)

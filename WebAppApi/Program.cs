@@ -1,3 +1,5 @@
+using WebAppApi.Filters;
+using WebAppApi.Middlewares;
 using WebAppApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,23 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+// app.UseMiddleware<StatsMiddleware>();
+
+/*
+// executed each time send request to server. inline middleware, calculate execution time of the request
+app.Use((context, next) =>
+{
+	DateTime requestTime = DateTime.Now;
+
+	var result =  next(context); // everything before this statement will get executed before controller's execution
+
+	DateTime responseTime = DateTime.Now;
+	TimeSpan processDuration = responseTime - requestTime;
+	Console.WriteLine("[Inline Middleware] Process Duration=" + processDuration.TotalMilliseconds + "ms");
+	return result;
+
+}); 
+*/
 
 app.UseHttpsRedirection();
 
